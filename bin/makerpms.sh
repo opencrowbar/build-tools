@@ -4,7 +4,7 @@ VERSION=2.0
 LIST="core openstack hadoop hardware build-tools template"
 WORK=/tmp/work
 RPMHOME=$HOME/rpmbuild
-TOPLEVEL=../..
+TOPLEVEL=.
 PACKAGESPECS=$TOPLEVEL/build-tools/pkginfo
 
 
