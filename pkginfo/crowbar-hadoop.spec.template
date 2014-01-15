@@ -1,0 +1,58 @@
+#
+# spec file for package crowbar-hadoop
+#
+# Copyright (c) 2014 Dell
+#
+#
+
+Name:     crowbar-hadoop
+Version:  2.0
+Release:  1
+License:  Apache-2.0
+Packager: Dell Revolutionary Cloud Team <crowbar@lists.us.dell.com>
+Summary:  Crowbar is a Hardware Provisioner and Software Deployment Tool
+Url:      http://wwww.opencrowbar.org
+Group:    system/management
+Source:   %{name}-2.0.tgz
+#Patch:
+Requires: ruby >= 1.9
+#BuildRequires: 
+#PreReq:
+#Provides:
+BuildRoot:  %{_tmppath}/%{name}-%{version}-build
+BuildArch:  noarch
+
+%description
+This is the crowbar-build-tools package for Crowbar 2.0.
+
+Crowbar 2.0 is a second-generation DevOps tool that enables deployment of bare servers
+into a production ready cluster in a matter of hours.  Crowbar 2.0 can deploy any software
+stack, but has been initially developed to deploy Hadoop and OpenStack.
+
+Crowbar 2.0 is able to prepare server hardware, firmware, and hardware-based controllers
+to create a known-state hardware platform that is ready to receive the installation of
+an operating system, application-specific software, pre-configure the application-specific
+platform so it is ready to deploy a clustered workload to compute and/or storage nodes.
+
+Crowbar provides server discovery, firmware updates, and operating system installation 
+using PXE boot or virtual instance deployment.  Crowbar deploys applications on top of
+hardware-provisioned operating system platforms using Jigs.  Supported Jigs includes:
+Chef, Puppet, and SSH-based shell scripting.
+
+%prep
+%setup -q
+
+%install
+mkdir -p $RPM_BUILD_ROOT/opt/crowbar/hadoop
+cp -rp . $RPM_BUILD_ROOT/opt/crowbar/hadoop/
+
+#%post
+
+#%postun
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files 
+%defattr(-,root,root)
+%doc README.md LICENSE.md
