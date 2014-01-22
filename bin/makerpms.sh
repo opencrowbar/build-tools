@@ -17,29 +17,30 @@ fi
 VERSION=2.0
 TOPLEVEL=${CROWBAR_HOME}/.
 PACKAGESPECS=${TOPLEVEL}/build-tools/pkginfo
-
+PREFIX=/opt/opencrowbar
+PKGPREFIX=opencrowbar
 
 cd $TOPLEVEL
 for repo in `echo $CROWBAR_REPOS`
 do
-  BLDSPEC=$RPMHOME/SPECS/crowbar-$repo.spec
+  BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo.spec
   ( 
-    mkdir -p $WORK/crowbar-$repo-$VERSION
+    mkdir -p $WORK/$PKGPREFIX-$repo-$VERSION
 
-    cp $PACKAGESPECS/crowbar-$repo.spec.template $BLDSPEC
-    ( cd $repo && rsync -a . $WORK/crowbar-$repo-$VERSION/. )
+    cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC
+    ( cd $repo && rsync -a . $WORK/$PKGPREFIX-$repo-$VERSION/. )
     cd $WORK
-    tar czvf crowbar-$repo-$VERSION.tgz --exclude=.git\* crowbar-$repo-$VERSION
-    mv crowbar-$repo-$VERSION.tgz $RPMHOME/SOURCES/
-    cd $WORK/crowbar-$repo-$VERSION
-    find * -type d ! -xtype l | grep -v \.git | sed "s/^/\%dir \/opt\/crowbar\/${repo}\//g" >>  $BLDSPEC
-    find * -type f | grep -v \.git | sed "s/^/\/opt\/crowbar\/${repo}\//g" >> $BLDSPEC
-    find * -type l | grep -v \.git | sed "s/^/\/opt\/crowbar\/${repo}\//g" >> $BLDSPEC
-    rm -rf crowbar-$repo-$VERSION
+    tar czvf $PKGPREFIX-$repo-$VERSION.tgz --exclude=.git\* $PKGPREFIX-$repo-$VERSION
+    mv $PKGPREFIX-$repo-$VERSION.tgz $RPMHOME/SOURCES/
+    cd $WORK/$PKGPREFIX-$repo-$VERSION
+    find * -type d ! -xtype l | grep -v \.git | sed "s/^/\%dir $PREFIX\/${repo}\//g" >>  $BLDSPEC
+    find * -type f | grep -v \.git | sed "s/^/$PREFIX\/${repo}\//g" >> $BLDSPEC
+    find * -type l | grep -v \.git | sed "s/^/$PREFIX\/${repo}\//g" >> $BLDSPEC
+    rm -rf $PKGPREFIX-$repo-$VERSION
   )
 
   cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
-  ( cd $RPMHOME/SPECS && rpmbuild -ba -v crowbar-$repo.spec )
+  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir=$RPMHOME" -v $PKGPREFIX-$repo.spec )
   rm -rf $WORK
 done
-exit 0
+exit 0 
