@@ -17,11 +17,11 @@ fi
 VERSION=2.0
 TOPLEVEL=${CROWBAR_HOME}/.
 PACKAGESPECS=${TOPLEVEL}/build-tools/pkginfo
-PREFIX=/opt/opencrowbar
+PREFIX="\/opt\/opencrowbar"
 PKGPREFIX=opencrowbar
 
 cd $TOPLEVEL
-for repo in `echo $CROWBAR_REPOS`
+for repo in $CROWBAR_REPOS
 do
   BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo.spec
   ( 
@@ -40,7 +40,7 @@ do
   )
 
   cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
-  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir=$RPMHOME" -v $PKGPREFIX-$repo.spec )
+  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v $PKGPREFIX-$repo.spec )
   rm -rf $WORK
 done
 exit 0 
