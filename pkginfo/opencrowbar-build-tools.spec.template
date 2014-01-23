@@ -1,11 +1,11 @@
 #
-# spec file for package crowbar-build-tools
+# spec file for package opencrowbar-build-tools
 #
 # Copyright (c) 2014 Dell
 #
 #
 
-Name:     crowbar-build-tools
+Name:     opencrowbar-build-tools
 Version:  2.0
 Release:  1
 License:  Apache-2.0
@@ -23,7 +23,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 
 %description
-This is the crowbar-build-tools package for Crowbar 2.0.
+This is the opencrowbar-build-tools package for Crowbar 2.0.
 
 Crowbar 2.0 is a second-generation DevOps tool that enables deployment of bare servers
 into a production ready cluster in a matter of hours.  Crowbar 2.0 can deploy any software
@@ -43,8 +43,8 @@ Chef, Puppet, and SSH-based shell scripting.
 %setup -q
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/crowbar/build-tools
-cp -rp . $RPM_BUILD_ROOT/opt/crowbar/build-tools/
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/build-tools
+cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/build-tools/
 
 #%post
 

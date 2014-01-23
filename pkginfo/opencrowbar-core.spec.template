@@ -1,11 +1,11 @@
 #
-# spec file for package crowbar-core
+# spec file for package opencrowbar-core
 #
 # Copyright (c) 2014 Dell
 #
 #
 
-Name:     crowbar-core
+Name:     opencrowbar-core
 Version:  2.0
 Release:  1
 License:  Apache-2.0
@@ -23,7 +23,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 
 %description
-This is the crowbar-core package for Crowbar 2.0. A typical deployment will require this
+This is the opencrowbar-core package for Crowbar 2.0. A typical deployment will require this
 package and at least one workload deployer package such as: crowbar-openstack,
 crowbar-hadoop, crowbar-ceph, etc.
 
@@ -45,8 +45,8 @@ Chef, Puppet, and SSH-based shell scripting.
 %setup -q
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/crowbar/core
-cp -rp . $RPM_BUILD_ROOT/opt/crowbar/core/.
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
+cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
 
 #%post
 
@@ -58,4 +58,4 @@ rm -rf $RPM_BUILD_ROOT
 %files 
 %defattr(-,root,root)
 %doc README.md LICENSE.md
-%dir /opt/crowbar/core/
+%dir /opt/opencrowbar/core/
