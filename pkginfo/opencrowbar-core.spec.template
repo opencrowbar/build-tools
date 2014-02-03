@@ -16,6 +16,7 @@ Group:    system/management
 Source:   %{name}-2.0.tgz
 #Patch:
 Requires: ruby >= 1.9
+Requires: postgresql93 postgresql93-server postgresql93-contrib
 #BuildRequires: 
 #PreReq:
 #Provides:
