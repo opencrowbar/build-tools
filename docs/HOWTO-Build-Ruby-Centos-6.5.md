@@ -38,7 +38,7 @@ RPM packages that can replace the Centos 6.5 Ruby 1.8.7 packages.
 2. cd /tmp/Work
 3. git clone https://github.com/ruby/ruby.git
 4. cd ruby
-5. git checkout -b origin/ruby_2_0_0
+5. git checkout origin/ruby_2_0_0
 6. cd ..
 7. Filter from ruby_2_0_0/version.h the value of:
     #define RUBY_PATCHLEVEL 388
