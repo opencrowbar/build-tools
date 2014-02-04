@@ -26,11 +26,10 @@ do
   BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo.spec
   ( 
     mkdir -p $WORK/$PKGPREFIX-$repo-$VERSION
-
     cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC
     ( cd $repo && rsync -a . $WORK/$PKGPREFIX-$repo-$VERSION/. )
     cd $WORK
-    tar czvf $PKGPREFIX-$repo-$VERSION.tgz --exclude=.git\* $PKGPREFIX-$repo-$VERSION
+    tar czf $PKGPREFIX-$repo-$VERSION.tgz --exclude=.git\* $PKGPREFIX-$repo-$VERSION
     mv $PKGPREFIX-$repo-$VERSION.tgz $RPMHOME/SOURCES/
     cd $WORK/$PKGPREFIX-$repo-$VERSION
     find * -type d ! -xtype l | grep -v \.git | sed "s/^/\%dir $PREFIX\/${repo}\//g" >>  $BLDSPEC
@@ -40,7 +39,8 @@ do
   )
 
   cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
-  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v $PKGPREFIX-$repo.spec )
+  sed -i 's/\.py/\.p\*/g' $BLDSPEC
+  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PKGPREFIX-$repo.spec )
   rm -rf $WORK
 done
 exit 0 
