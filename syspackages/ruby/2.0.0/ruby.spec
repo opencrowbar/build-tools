@@ -19,7 +19,7 @@
 %endif
 
 
-%global release dell001
+%global release 1
 %{!?release_string:%global release_string %{?development_release:0.}%{release}%{?development_release:.%{development_release}}%{?dist}}
 
 %global rubygems_version 2.0.2
