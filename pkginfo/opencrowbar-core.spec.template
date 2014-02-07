@@ -17,6 +17,8 @@ Source:   %{name}-2.0.tgz
 #Patch:
 Requires: ruby >= 1.9
 Requires: postgresql93 postgresql93-server postgresql93-contrib
+Requires: libpqxx libpqxx-devel openssl-devel
+Requires: sudo libxml2 libxml2-devel gcc make
 #BuildRequires: 
 #PreReq:
 #Provides:
@@ -49,7 +51,9 @@ Chef, Puppet, and SSH-based shell scripting.
 mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
 cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
 
-#%post
+%post
+cd /opt/opencrowbar/core
+./bootstrap.sh
 
 #%postun
 
