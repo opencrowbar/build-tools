@@ -52,15 +52,15 @@ mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
 cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
 
 %post
-cd /opt/opencrowbar/core
-sh ./bootstrap.sh
+useradd -g 500 -u 500 -m crowbar
 
-#%postun
+%postun
+userdel -r crowbar
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,root,root)
+%defattr(-,500,500)
 %doc README.md LICENSE.md
 %dir /opt/opencrowbar/core/
