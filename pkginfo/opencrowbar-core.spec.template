@@ -53,7 +53,7 @@ cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
 
 %post
 cd /opt/opencrowbar/core
-./bootstrap.sh
+sh ./bootstrap.sh
 
 #%postun
 
