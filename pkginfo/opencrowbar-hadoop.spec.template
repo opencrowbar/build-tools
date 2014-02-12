@@ -16,6 +16,7 @@ Group:    system/management
 Source:   %{name}-2.0.tgz
 #Patch:
 Requires: ruby >= 1.9
+Requires: opencrowbar-core
 #BuildRequires: 
 #PreReq:
 #Provides:
@@ -54,5 +55,5 @@ cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/hadoop/
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,root,root)
+%defattr(-,crowbar,crowbar)
 %doc README.md LICENSE.md

@@ -17,8 +17,9 @@ Source:   %{name}-2.0.tgz
 #Patch:
 Requires: ruby >= 1.9
 Requires: postgresql93 postgresql93-server postgresql93-contrib
-Requires: libpqxx libpqxx-devel openssl-devel
-Requires: sudo libxml2 libxml2-devel gcc make
+Requires: libpqxx libpqxx-devel openssl-devel gcc gcc-c++ make which patch
+Requires: sudo libxml2 libxml2-devel gcc libyaml libyaml-devel libffi-devel
+Requires: autoconf automake libtool
 #BuildRequires: 
 #PreReq:
 #Provides:
@@ -50,17 +51,28 @@ Chef, Puppet, and SSH-based shell scripting.
 %install
 mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
 cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
+mkdir -p $RPM_BUILD_ROOT/%{_initddir}
+cp -f ./etc/init.d/crowbar $RPM_BUILD_ROOT/%{_initddir}/crowbar
+
+%pre
+useradd -m crowbar
+install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 
 %post
-useradd -g 500 -u 500 -m crowbar
+/sbin/ldconfig
+export RAILS_ENV=production
+
+%preun
 
 %postun
 userdel -r crowbar
+/sbin/ldconfig
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,500,500)
+%defattr(-,crowbar,crowbar)
 %doc README.md LICENSE.md
 %dir /opt/opencrowbar/core/
+%{_initddir}/crowbar
