@@ -1,11 +1,11 @@
 #
-# spec file for package opencrowbar-openstack
+# spec file for package opencrowbar-hardware
 #
 # Copyright (c) 2014 Dell
 #
 #
 
-Name:     opencrowbar-openstack
+Name:     opencrowbar-hardware
 Version:  2.0
 Release:  1
 License:  Apache-2.0
@@ -24,8 +24,9 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 
 %description
-This is the openstack workload driver module for Crowbar 2.0. Use of this package will
-require installation of the opencrowbar-core package.
+This is the opencrowbar-hardware package for Crowbar 2.0. This pacakge is required for
+any working installation that requires the RIAD and BIOS hardware provisioning capability.
+modules.
 
 Crowbar 2.0 is a second-generation DevOps tool that enables deployment of bare servers
 into a production ready cluster in a matter of hours.  Crowbar 2.0 can deploy any software
@@ -45,8 +46,8 @@ Chef, Puppet, and SSH-based shell scripting.
 %setup -q
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/openstack
-cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/openstack/
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/hardware
+cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/hardware/
 
 #%post
 
@@ -56,5 +57,5 @@ cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/openstack/
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,crowbar,crowbar)
+%defattr(-,root,root)
 %doc README.md LICENSE.md
