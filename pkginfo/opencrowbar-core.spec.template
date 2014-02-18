@@ -55,14 +55,16 @@ mkdir -p $RPM_BUILD_ROOT/%{_initddir}
 cp -f ./etc/init.d/crowbar $RPM_BUILD_ROOT/%{_initddir}/crowbar
 
 %pre
-useradd -m crowbar
+getent passwd crowbar &>/dev/null || useradd -m crowbar
 install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 
 %post
+[[ $1 -eq 1 ]] && chkconfig crowbar on && service crowbar start
 /sbin/ldconfig
-export RAILS_ENV=production
 
 %preun
+#[[ $1 -eq 0 ]] && service crowbar stop
+chkconfig crowbar off
 
 %postun
 userdel -r crowbar

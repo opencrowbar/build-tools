@@ -49,9 +49,15 @@ Chef, Puppet, and SSH-based shell scripting.
 mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/hardware
 cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/hardware/
 
-#%post
+%pre
+getent passwd crowbar &>/dev/null || useradd -m crowbar
 
-#%postun
+%post
+chown -R crowbar:crowbar /opt/opencrowbar/hardware
+
+%postun
+rm -rf /opt/opencrownbar/hadoop
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
