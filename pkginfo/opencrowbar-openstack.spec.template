@@ -7,7 +7,7 @@
 
 Name:     opencrowbar-openstack
 Version:  ##OCBVER##
-Release:  ##OCBRELBO##
+Release:  ##OCBRELNO##
 License:  Apache-2.0
 Packager: Dell Revolutionary Cloud Team <opencrowbar@lists.us.dell.com>
 Summary:  Crowbar is a Hardware Provisioner and Software Deployment Tool
