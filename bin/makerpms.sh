@@ -35,7 +35,8 @@ do
     cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC || \
             die "Could not find $PKGPREFIX-$repo.spec.template"
     cd $repo || die "Can't find $repo"
-    PATCHLEVEL=`git log --abbrev-commit --pretty=oneline -n 1 | awk '{print $1}'`
+#    PATCHLEVEL=`git log --abbrev-commit --pretty=oneline -n 1 | awk '{print $1}'`
+     PATCHLEVEL=`git rev-list --no-merges HEAD | wc -l`
     if [[ $PRODREL == "Dev" ]]; then
         SRCVERS=$VERSION.$PATCHLEVEL
     else
@@ -47,7 +48,7 @@ do
             die "Could not create work directory $WORK/$PKGPREFIX-$repo-$SRCVERS"
     rsync -a . $WORK/$PKGPREFIX-$repo-$SRCVERS/. || \
             die "Copying (rsync) of files to work directory failed."
-    git log --pretty=oneline -n 10 >> $WORK/$PKGPREFIX-$repo-$SRCVERS/README.Last10Merges
+    git log --pretty=oneline -n 10 >> $WORK/$PKGPREFIX-$repo-$SRCVERS/doc/README.Last10Merges
     cd $WORK || \
             die "Could not change to $WORK directory"
     tar czf $PKGPREFIX-$repo-$SRCVERS.tgz --exclude=.git\* $PKGPREFIX-$repo-$SRCVERS || \
