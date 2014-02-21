@@ -1,14 +1,13 @@
 #!/bin/bash
-#
-# This script will build development (ephemeral) RPM packages and can build release RPM packages
-#   - if you want to build release code execute:
-#                                              PRODREL="RELEASE" ./build-tools/bin/makerpms.sh
-#   - if you want to build emphemeral RPMS:
-#                                              ./build-tools/bin/makerpms/sh
+
+echo "This $0 script is not ready - is under maybe constructions. Try again some time!" && exit 0
+
+########## This is here for the future ###########
+
 
 #USERDEFINED
 CROWBAR_HOME=${CROWBAR_HOME:-$HOME/opencrowbar}
-CROWBAR_REPOS=${CROWBAR_REPOS:-"core openstack hadoop hardware build-tools template"}
+CROWBAR_REPOS=${CROWBAR_REPOS:-"core"
 PRODREL=${PRODREL:-"Dev"}
 VERSION=${VERSION:-2.0.0}
 RELEASE=${RELEASE:-1}
@@ -73,4 +72,19 @@ do
   cd $CROWBAR_HOME && rm -rf $WORK
 done
 
-exit 0 
+# Create the opencrowbar-discovery package containing Sledgehammer
+repo=core
+BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo-discovery.spec
+( 
+  cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC || \
+          die "Could not find $PKGPREFIX-$repo.spec.template"
+  cd $repo || die "Can't find $repo"
+  get_patchlevel
+  sed -i "s/##OCBVER##/$SRCVERS/g" $BLDSPEC
+  sed -i "s/##OCBRELNO##/$RELEASE/g" $BLDSPEC
+)
+cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
+( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PKGPREFIX-$repo-discovery.spec )
+cd $CROWBAR_HOME 
+
+exit -1
