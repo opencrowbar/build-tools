@@ -27,6 +27,16 @@ PACKAGESPECS=$CROWBAR_HOME/build-tools/pkginfo
 PREFIX="\/opt\/opencrowbar"
 PKGPREFIX=opencrowbar
 
+get_patchlevel() {
+#   PATCHLEVEL=`git log --abbrev-commit --pretty=oneline -n 1 | awk '{print $1}'`
+    PATCHLEVEL=`git rev-list --no-merges HEAD | wc -l`
+    if [[ $PRODREL == "Dev" ]]; then
+        SRCVERS=$VERSION.$PATCHLEVEL
+    else
+        SRCVERS=$VERSION
+    fi
+}
+
 cd $CROWBAR_HOME
 for repo in $CROWBAR_REPOS
 do
@@ -35,13 +45,7 @@ do
     cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC || \
             die "Could not find $PKGPREFIX-$repo.spec.template"
     cd $repo || die "Can't find $repo"
-#    PATCHLEVEL=`git log --abbrev-commit --pretty=oneline -n 1 | awk '{print $1}'`
-     PATCHLEVEL=`git rev-list --no-merges HEAD | wc -l`
-    if [[ $PRODREL == "Dev" ]]; then
-        SRCVERS=$VERSION.$PATCHLEVEL
-    else
-        SRCVERS=$VERSION
-    fi
+    get_patchlevel
     sed -i "s/##OCBVER##/$SRCVERS/g" $BLDSPEC
     sed -i "s/##OCBRELNO##/$RELEASE/g" $BLDSPEC
     mkdir -p $WORK/$PKGPREFIX-$repo-$SRCVERS  || \
@@ -68,4 +72,20 @@ do
   ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PKGPREFIX-$repo.spec )
   cd $CROWBAR_HOME && rm -rf $WORK
 done
+
+# Create the opencrowbar-discovery package containing Sledgehammer
+  repo=core
+  BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo-discovery.spec
+  ( 
+    cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC || \
+            die "Could not find $PKGPREFIX-$repo.spec.template"
+    cd $repo || die "Can't find $repo"
+    get_patchlevel
+    sed -i "s/##OCBVER##/$SRCVERS/g" $BLDSPEC
+    sed -i "s/##OCBRELNO##/$RELEASE/g" $BLDSPEC
+  )
+  cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
+  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PKGPREFIX-$repo-discovery.spec )
+  cd $CROWBAR_HOME 
+
 exit 0 

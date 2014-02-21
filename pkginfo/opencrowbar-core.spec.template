@@ -10,7 +10,7 @@ Version:  ##OCBVER##
 Release:  ##OCBRELNO##
 License:  Apache-2.0
 Packager: Dell Revolutionary Cloud Team <crowbar@lists.us.dell.com>
-Summary:  Crowbar is a Hardware Provisioner and Software Deployment Tool
+Summary:  OpenCrowbar is a Hardware Provisioner and Software Deployment Tool
 Url:      http://wwww.opencrowbar.org
 Group:    system/management
 Source:   %{name}-%{version}.tgz
