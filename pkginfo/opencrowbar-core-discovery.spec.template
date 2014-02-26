@@ -13,13 +13,13 @@ Packager: Dell Revolutionary Cloud Team <crowbar@lists.us.dell.com>
 Summary:  OpenCrowbar is a Hardware Provisioner and Software Deployment Tool
 Url:      http://wwww.opencrowbar.org
 Group:    system/management
-Source:   opencrowbar-core-%{version}.tgz
+Source:   %{name}-%{version}.tgz
 #Patch:
 Requires: opencrowbar-core
 #BuildRequires: 
 #PreReq:
 #Provides:
-BuildRoot:  %{_tmppath}/opencrowbar-%{version}-build
+BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 
 %description
 This is the opencrowbar-core-discovery package for OpenCrowbar. A typical deployment will
@@ -54,16 +54,16 @@ from the opencrowbar-core package during preparation of the pristine tarball.
 mkdir -p $RPM_BUILD_DIR/{cache,discovery,chroot,tftpboot,livecd}
 cd tools
 CACHE_DIR=$RPM_BUILD_DIR/cache \
-SLEDGEHAMMER_PXE_DIR=$RPM_BUILD_DIR/discovery \
 CHROOT=$RPM_BUILD_DIR/chroot \
 SLEDGEHAMMER_LIVECD_CACHE=$RPM_BUILD_DIR/livecd \
 SLEDGEHAMMER_TFTPBOOT_DIR=$RPM_BUILD_DIR/tftpboot \
+SLEDGEHAMMER_PXE_DIR=$RPM_BUILD_DIR/tftpboot/discovery \
 ./build_sledgehammer.sh
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/discovery}
-cp -rp tftpboot/. $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/.
-chown root:root $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/discovery
+cd $RPM_BUILD_DIR
+cp -rp tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
