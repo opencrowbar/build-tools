@@ -1,25 +1,22 @@
 #
-# spec file for package opencrowbar-core
+# spec file for package opencrowbar-ceph
 #
 # Copyright (c) 2014 Dell
 #
 #
 
-Name:     opencrowbar-core
+Name:     opencrowbar-ceph
 Version:  ##OCBVER##
 Release:  ##OCBRELNO##
 License:  Apache-2.0
-Packager: Dell Revolutionary Cloud Team <crowbar@lists.us.dell.com>
+Packager: Dell Revolutionary Cloud Team <opencrowbar@lists.us.dell.com>
 Summary:  OpenCrowbar is a Hardware Provisioner and Software Deployment Tool
 Url:      http://wwww.opencrowbar.org
 Group:    system/management
 Source:   %{name}-%{version}.tgz
 #Patch:
-Requires: ruby >= 1.9
-Requires: postgresql93 postgresql93-server postgresql93-contrib
-Requires: libpqxx libpqxx-devel openssl-devel gcc gcc-c++ make which patch
-Requires: sudo libxml2 libxml2-devel gcc libyaml libyaml-devel libffi-devel
-Requires: autoconf automake libtool
+Requires: ceph ceph-libcephfs ceph-libs ceph-radosgw ceph-fuse
+Requires: opencrowbar-core
 #BuildRequires: 
 #PreReq:
 #Provides:
@@ -27,9 +24,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 
 %description
-This is the opencrowbar-core package for OpenCrowbar. A typical deployment will require this
-package and at least one workload deployer package such as: crowbar-openstack,
-crowbar-hadoop, crowbar-ceph, etc.
+This is the opencrowbar-ceph package for OpenCrowbar.
 
 OpenCrowbar is a second-generation DevOps tool that enables deployment of bare servers
 into a production ready cluster in a matter of hours.  OpenCrowbar can deploy any software
@@ -49,40 +44,17 @@ Chef, Puppet, and SSH-based shell scripting.
 %setup -q
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
-cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
-mkdir -p $RPM_BUILD_ROOT/%{_initddir}
-cp -f ./etc/init.d/crowbar $RPM_BUILD_ROOT/%{_initddir}/crowbar
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/ceph
+cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/ceph/
 
 %pre
 getent passwd crowbar &>/dev/null || useradd -m crowbar
-install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 
 %post
-[[ $1 -eq 1 ]] && chkconfig crowbar on && service crowbar start
-/sbin/ldconfig
-cd /opt/opencrowbar/core
-cat <<EOF >/opt/opencrowbar/prep.sh
-#!/bin/bash
-
-export RAILS_ENV=production
-cd /opt/opencrowbar/core
-gem install bundler
-./bootstrap.sh
-./setup/01-crowbar-rake-tasks.install
-./setup/02-make-machine-key.install
-EOF
-chmod 775 /opt/opencrowbar/prep.sh
-
-
-%preun
-[[ $1 -eq 0 ]] && service crowbar stop
-chkconfig crowbar off
+chown -R crowbar:crowbar /opt/opencrowbar/ceph
 
 %postun
-userdel -r crowbar
-rm -rf /opt/opencrowbar
-/sbin/ldconfig
+rm -rf /opt/opencrownbar/ceph
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -90,5 +62,3 @@ rm -rf $RPM_BUILD_ROOT
 %files 
 %defattr(-,crowbar,crowbar)
 %doc README.md LICENSE.md
-%dir /opt/opencrowbar/core/
-%{_initddir}/crowbar
