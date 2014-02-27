@@ -63,8 +63,7 @@ SLEDGEHAMMER_PXE_DIR=$SLEDGEDIR/tftpboot/discovery \
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/discovery
-cd $RPM_BUILD_DIR
-cp -rp tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
+cp -rp $RPM_BUILD_DIR/%{name}/tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
 
 %post
 [[ -d /tftpboot ]] && ln -sf /opt/opencrowbar/core-discovery/tftpboot/discovery /tftpboot/discovery
