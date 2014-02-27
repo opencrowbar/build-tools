@@ -65,6 +65,14 @@ mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/discovery
 cd $RPM_BUILD_DIR
 cp -rp tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
 
+%post
+[[ -d /tftpboot ]] && ln -sf /opt/opencrowbar/core-discovery/tftpboot/discovery /tftpboot/discovery
+[[ -d /srv/tftpboot ]] && ln -sf /opt/opencrowbar/core-discovery/tftpboot/discovery /srv/tftpboot/discovery
+
+%preun
+[[ -d /tftpboot ]] && rm -f /tftpboot/discovery
+[[ -d /srv/tftpboot ]] && rm -f /srv/tftpboot/discovery
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 

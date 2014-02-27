@@ -63,12 +63,17 @@ install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 /sbin/ldconfig
 
 %preun
-#[[ $1 -eq 0 ]] && service crowbar stop
+[[ $1 -eq 0 ]] && service crowbar stop
 chkconfig crowbar off
 
 %postun
 userdel -r crowbar
 /sbin/ldconfig
+cd /opt/opencrowbar/core
+./bootstrap.sh
+./setup/01-crowbar-rake-tasks.install
+./setup/02-make-machine-key.install
+/etc/init.d/crowbar restart
 
 %clean
 rm -rf $RPM_BUILD_ROOT
