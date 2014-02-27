@@ -51,13 +51,14 @@ from the opencrowbar-core package during preparation of the pristine tarball.
 %setup -q
 
 %build
-mkdir -p $RPM_BUILD_DIR/{cache,discovery,chroot,tftpboot,livecd}
+SLEDGEDIR=$RPM_BUILD_DIR/%{name}
+mkdir -p $SLEDGEDIR/{cache,discovery,chroot,tftpboot,livecd}
 cd tools
-CACHE_DIR=$RPM_BUILD_DIR/cache \
-CHROOT=$RPM_BUILD_DIR/chroot \
-SLEDGEHAMMER_LIVECD_CACHE=$RPM_BUILD_DIR/livecd \
-SLEDGEHAMMER_TFTPBOOT_DIR=$RPM_BUILD_DIR/tftpboot \
-SLEDGEHAMMER_PXE_DIR=$RPM_BUILD_DIR/tftpboot/discovery \
+CACHE_DIR=$SLEDGEDIR/cache \
+CHROOT=$SLEDGEDIR/chroot \
+SLEDGEHAMMER_LIVECD_CACHE=$SLEDGEDIR/livecd \
+SLEDGEHAMMER_TFTPBOOT_DIR=$SLEDGEDIR/tftpboot \
+SLEDGEHAMMER_PXE_DIR=$SLEDGEDIR/tftpboot/discovery \
 ./build_sledgehammer.sh
 
 %install
@@ -75,6 +76,7 @@ cp -rp tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+sudo rm -rf SLEDGEDIR=$RPM_BUILD_DIR/%{name}
 
 %files 
 %defattr(-,root,root)
