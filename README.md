@@ -11,7 +11,7 @@ OpenCrowbar is being shipped in the following component parts:
   1. The *OpenCrowbar* _*core*_ RPM package - this is an essential package
 
   1. **Add-On workload packages including:**
-    1. __Ceph__ - The distributed file system workload -  **NOT yet implemented**
+    1. __Ceph__ - The distributed file system workload
     1. __Hadoop__ - The Distributed Object Storage workload
     1. __Hardware__ - The RAID and BIOS toolset workload
     1. __Openstack__ - The Cloud compute workload
