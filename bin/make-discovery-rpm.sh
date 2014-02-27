@@ -72,7 +72,12 @@ get_patchlevel() {
   sed -i "s/##OCBVER##/$SRCVERS/g" $BLDSPEC
   sed -i "s/##OCBRELNO##/$RELEASE/g" $BLDSPEC
 
-  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PRODNAME.spec )
+  (
+    cd $RPMHOME/SPECS
+    rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PRODNAME.spec 
+    cd $RPMHOME/BUILD
+    sudo rm -rf opencrowbar-core-discovery tftpboot 
+  )
   cd $CROWBAR_HOME 
 
 exit -1

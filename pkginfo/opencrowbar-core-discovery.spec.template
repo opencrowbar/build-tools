@@ -15,7 +15,7 @@ Url:      http://wwww.opencrowbar.org
 Group:    system/management
 Source:   %{name}-%{version}.tgz
 #Patch:
-Requires: opencrowbar-core
+Requires: opencrowbar-core tftp tftp-server
 #BuildRequires: 
 #PreReq:
 #Provides:
@@ -62,16 +62,17 @@ SLEDGEHAMMER_PXE_DIR=$SLEDGEDIR/tftpboot/discovery \
 ./build_sledgehammer.sh
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/tftpboot/discovery
-cp -rp $RPM_BUILD_DIR/%{name}/tftpboot $RPM_BUILD_ROOT/opt/opencrowbar/core-discovery/
+mkdir -p $RPM_BUILD_ROOT/tftpboot/discovery
+cp -rp $RPM_BUILD_DIR/%{name}/tftpboot $RPM_BUILD_ROOT/
+
+%pre
+[[ -d /tftpboot ]] || mkdir /tftpboot
 
 %post
-[[ -d /tftpboot ]] && ln -sf /opt/opencrowbar/core-discovery/tftpboot/discovery /tftpboot/discovery
-[[ -d /srv/tftpboot ]] && ln -sf /opt/opencrowbar/core-discovery/tftpboot/discovery /srv/tftpboot/discovery
+[[ -d /tftpboot ]] && ln -sf /tftpboot/ /opt/opencrowbar/core-discovery/tftpboot
 
 %preun
-[[ -d /tftpboot ]] && rm -f /tftpboot/discovery
-[[ -d /srv/tftpboot ]] && rm -f /srv/tftpboot/discovery
+[[ -d /opt/opencrowbar/core-discovery/tftpboot ]] && rm -f /opt/opencrowbar/core-discovery/tftpboot
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -80,6 +81,6 @@ sudo rm -rf SLEDGEDIR=$RPM_BUILD_DIR/%{name}
 %files 
 %defattr(-,root,root)
 %doc README.md LICENSE.md
-%dir /opt/opencrowbar/core-discovery/tftpboot/discovery
-/opt/opencrowbar/core-discovery/tftpboot/discovery/*
+%dir /tftpboot/discovery
+/tftpboot/discovery/*
 
