@@ -8,7 +8,7 @@
 
 #USERDEFINED
 CROWBAR_HOME=${CROWBAR_HOME:-$HOME/opencrowbar}
-CROWBAR_REPOS=${CROWBAR_REPOS:-"core openstack hadoop hardware build-tools template"}
+CROWBAR_REPOS=${CROWBAR_REPOS:-"core openstack ceph hadoop hardware build-tools template"}
 PRODREL=${PRODREL:-"Dev"}
 VERSION=${VERSION:-2.0.0}
 RELEASE=${RELEASE:-1}

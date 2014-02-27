@@ -1,0 +1,64 @@
+#
+# spec file for package opencrowbar-ceph
+#
+# Copyright (c) 2014 Dell
+#
+#
+
+Name:     opencrowbar-ceph
+Version:  ##OCBVER##
+Release:  ##OCBRELNO##
+License:  Apache-2.0
+Packager: Dell Revolutionary Cloud Team <opencrowbar@lists.us.dell.com>
+Summary:  OpenCrowbar is a Hardware Provisioner and Software Deployment Tool
+Url:      http://wwww.opencrowbar.org
+Group:    system/management
+Source:   %{name}-%{version}.tgz
+#Patch:
+Requires: ceph ceph-libcephfs ceph-libs ceph-radosgw ceph-fuse
+Requires: opencrowbar-core
+#BuildRequires: 
+#PreReq:
+#Provides:
+BuildRoot:  %{_tmppath}/%{name}-%{version}-build
+BuildArch:  noarch
+
+%description
+This is the opencrowbar-ceph package for OpenCrowbar.
+
+OpenCrowbar is a second-generation DevOps tool that enables deployment of bare servers
+into a production ready cluster in a matter of hours.  OpenCrowbar can deploy any software
+stack, but has been initially developed to deploy Hadoop and OpenStack.
+
+OpenCrowbar is able to prepare server hardware, firmware, and hardware-based controllers
+to create a known-state hardware platform that is ready to receive the installation of
+an operating system, application-specific software, pre-configure the application-specific
+platform so it is ready to deploy a clustered workload to compute and/or storage nodes.
+
+OpenCrowbar provides server discovery, firmware updates, and operating system installation 
+using PXE boot or virtual instance deployment.  OpenCrowbar deploys applications on top of
+hardware-provisioned operating system platforms using Jigs.  Supported Jigs includes:
+Chef, Puppet, and SSH-based shell scripting.
+
+%prep
+%setup -q
+
+%install
+mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/ceph
+cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/ceph/
+
+%pre
+getent passwd crowbar &>/dev/null || useradd -m crowbar
+
+%post
+chown -R crowbar:crowbar /opt/opencrowbar/ceph
+
+%postun
+rm -rf /opt/opencrownbar/ceph
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files 
+%defattr(-,crowbar,crowbar)
+%doc README.md LICENSE.md
