@@ -54,7 +54,7 @@ getent passwd crowbar &>/dev/null || useradd -m crowbar
 chown -R crowbar:crowbar /opt/opencrowbar/ceph
 
 %postun
-rm -rf /opt/opencrownbar/ceph
+rm -rf /opt/opencrowbar/ceph
 
 %clean
 rm -rf $RPM_BUILD_ROOT
