@@ -1,4 +1,4 @@
-OPEN CROWBAR LICENSE:
+#OPEN CROWBAR LICENSE:
 
 Crowbar is made available by Dell under the Apache 2 license.
 
@@ -12,10 +12,10 @@ Crowbar is made available by Dell under the Apache 2 license.
     See the License for the specific language governing permissions and
     limitations under the License.
 
-COMPONENT LICENSES:
+##COMPONENT LICENSES:
 
 Please see /doc/licenses for component license information
 
-ADDITIONAL COMPONENTS:
+##ADDITIONAL COMPONENTS:
 
 Extensions to the Crowbar framework (aka "barclamps") may be offered under different licenses.  These licenses should be documented under the components relevenat "/doc/licenses" directory.
