@@ -61,6 +61,19 @@ install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 %post
 [[ $1 -eq 1 ]] && chkconfig crowbar on && service crowbar start
 /sbin/ldconfig
+cd /opt/opencrowbar/core
+cat <<EOF >/opt/opencrowbar/prep.sh
+#!/bin/bash
+
+export RAILS_ENV=production
+cd /opt/opencrowbar/core
+gem install bundler
+./bootstrap.sh
+./setup/01-crowbar-rake-tasks.install
+./setup/02-make-machine-key.install
+EOF
+chmod 775 /opt/opencrowbar/prep.sh
+
 
 %preun
 [[ $1 -eq 0 ]] && service crowbar stop
@@ -68,12 +81,8 @@ chkconfig crowbar off
 
 %postun
 userdel -r crowbar
+rm -rf /opt/opencrowbar
 /sbin/ldconfig
-cd /opt/opencrowbar/core
-./bootstrap.sh
-./setup/01-crowbar-rake-tasks.install
-./setup/02-make-machine-key.install
-/etc/init.d/crowbar restart
 
 %clean
 rm -rf $RPM_BUILD_ROOT
