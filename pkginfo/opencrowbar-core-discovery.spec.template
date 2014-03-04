@@ -83,5 +83,5 @@ sudo rm -rf SLEDGEDIR=$RPM_BUILD_DIR/%{name}
 %defattr(-,root,root)
 %doc README.md LICENSE.md
 %dir /tftpboot/discovery
+%dir /opt/opencrowbar/core-discovery/tftpboot
 /tftpboot/discovery/*
-
