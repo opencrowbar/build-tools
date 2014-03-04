@@ -72,9 +72,6 @@ cp -rp $RPM_BUILD_DIR/%{name}/tftpboot $RPM_BUILD_ROOT/
 %post
 [[ -d /tftpboot ]] && ln -sf /tftpboot/discovery /opt/opencrowbar/core-discovery/tftpboot/discovery
 
-%preun
-[[ -d /opt/opencrowbar/core-discovery/tftpboot ]] && rm -f /opt/opencrowbar/core-discovery/tftpboot
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 sudo rm -rf SLEDGEDIR=$RPM_BUILD_DIR/%{name}
