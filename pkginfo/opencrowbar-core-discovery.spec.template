@@ -70,7 +70,7 @@ cp -rp $RPM_BUILD_DIR/%{name}/tftpboot $RPM_BUILD_ROOT/
 [[ -d /tftpboot ]] || mkdir /tftpboot
 
 %post
-[[ -d /tftpboot ]] && ln -sf /tftpboot/ /opt/opencrowbar/core-discovery/tftpboot
+[[ -d /tftpboot ]] && ln -sf /tftpboot/discovery /opt/opencrowbar/core-discovery/tftpboot/discovery
 
 %preun
 [[ -d /opt/opencrowbar/core-discovery/tftpboot ]] && rm -f /opt/opencrowbar/core-discovery/tftpboot
