@@ -1,37 +1,17 @@
-# OpenCrowbar Build Tools
+To build the OpenCrowbar RPMS (optionally including Ruby), perform the
+following steps:
 
-Opencrowbar Build Toolset consists of tools that can be used to:
-
-## Create RPM Packages
-OpenCrowbar will be shipped via OS platform targetted RPM
-packages. Where necessary additional RPM packages of dependencies may
-also need to be made available. This document provides an overview of
-the scripts and tools that can be used to meet these needs.
-
-
-### OpenCrowbar Packages
-OpenCrowbar is being shipped in the following component parts:
-
-  1. The *OpenCrowbar* _*core*_ RPM package - this is an essential package
-
-  1. **Add-On workload packages including:**
-    1. __Ceph__ - The distributed file system workload
-    1. __Hadoop__ - The Distributed Object Storage workload
-    1. __Hardware__ - The RAID and BIOS toolset workload
-    1. __Openstack__ - The Cloud compute workload
-
-  1. Ancilliary Packages
-    1. Build-Tools - The tools used to produce all RPM packages
-    1. Crowbar-Utils - The Docker Developer-fiendly toolset
-    1. An example pattern for workload creation
-
-
-### RPM Packages of Dependencies
-At this time CentOS/RHEL 6.5 does not provide a suitable ruby-2.0.0
-RPM package. This build-tools repo provides a means of building this
-RPM package suite.
-
-
-## Produce OpenCrowbar Releases
-The toolset that is used for continuous production of OpenCrowbar RPM
-packages can be used to generate final release RPM packages.
+1. Start in a clean checkout directory.  We recommend
+   `$HOME/opencrowbar`.
+2. Clone the core and build-tools repos if you have not already done
+so with `git clone https://github.com/opencrowbar/<reponame>`
+3. Clone any workload repositories you want to use.  You can see the
+full list at https://github.com/opencrowbar
+4. Run the RPM build process with
+   `$HOME/opencrowbar/build-tools/bin/make-rpms.sh`.  This will build
+   RPM files for all the opencrowbar components.  If you want to build
+   our Ruby RPMs, add ` --with-ruby` to the end of that command.
+5. Use the fully-populated yum repository at
+   `$HOME/.cache/opencrowbar/tftpboot/centos-6.5/ocb-packages` to
+   install your new admin node.  How to get the repo onto your
+   already-built admin node is left as an excercise for the reader.
