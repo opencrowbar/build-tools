@@ -15,7 +15,6 @@ Url:      http://wwww.opencrowbar.org
 Group:    system/management
 Source:   %{name}-%{version}.tgz
 #Patch:
-Requires: ceph ceph-libcephfs ceph-libs ceph-radosgw ceph-fuse
 Requires: opencrowbar-core
 #BuildRequires: 
 #PreReq:
