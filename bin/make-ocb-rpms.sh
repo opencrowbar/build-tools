@@ -6,71 +6,76 @@
 #   - if you want to build emphemeral RPMS:
 #                                              ./build-tools/bin/makerpms/sh
 
-#USERDEFINED
-CROWBAR_HOME=${CROWBAR_HOME:-$HOME/opencrowbar}
-CROWBAR_REPOS=${CROWBAR_REPOS:-"core openstack ceph hadoop hardware build-tools template"}
+# Check that we are in the root of the opencrowbar checkout tree
+if [[ ! $OCBDIR ]]; then
+    if [[ $0 = /* ]]; then
+        OCBDIR="$0"
+    elif [[ $0 = .*  || $0 = */* ]]; then
+        OCBDIR="$(readlink -f "$PWD/$0")"
+    else
+        echo "Cannot figure out where we are!"
+        exit 1
+    fi
+    OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
+fi
+
 PRODREL=${PRODREL:-"Dev"}
 VERSION=${VERSION:-2.0.0}
 RELEASE=${RELEASE:-1}
 WORK=${WORK:-/tmp/work}
 RPMHOME=${RPMHOME:-$HOME/rpmbuild}
+set -x -e
 
 die() { echo "$(date '+%F %T %z'): $@"; exit 1; }
 
-if [[ ! -d $RPMHOME || ! -d $RPMHOME/SOURCES || ! -d $RPMHOME/SPECS  || ! -d $RPMHOME/BUILD ]]
-then
-  mkdir -p $RPMHOME/SOURCES $RPMHOME/SPECS $RPMHOME/BUILD 
-fi
+mkdir -p "$RPMHOME/SOURCES" "$RPMHOME/SPECS" "$RPMHOME/BUILD"
 
 #STATIC VARS
-PACKAGESPECS=$CROWBAR_HOME/build-tools/pkginfo
+PACKAGESPECS=$OCBDIR/build-tools/pkginfo
 PREFIX="\/opt\/opencrowbar"
 PKGPREFIX=opencrowbar
+# Make sure we start with a clean slate.
+[[ -d "$WORK" ]] && rm -rf "$WORK"
 
-get_patchlevel() {
-#   PATCHLEVEL=`git log --abbrev-commit --pretty=oneline -n 1 | awk '{print $1}'`
-    PATCHLEVEL=`git rev-list --no-merges HEAD | wc -l`
+for repodir in "$OCBDIR/"*; do
+    repo="${repodir##*/}"
+    spec_template="$PACKAGESPECS/$PKGPREFIX-$repo.spec.template"
+    final_spec="$RPMHOME/SPECS/$PKGPREFIX-$repo.spec"
+    [[ -f $spec_template ]] || continue
+    cd "$repodir" || die "Can't find $repo"
+    git clean -f -x -d || die "Cannot clean $repo"
+    PATCHLEVEL=$(git rev-list --no-merges HEAD | wc -l)
     if [[ $PRODREL == "Dev" ]]; then
         SRCVERS=$VERSION.$PATCHLEVEL
     else
         SRCVERS=$VERSION
     fi
-}
-
-cd $CROWBAR_HOME
-for repo in $CROWBAR_REPOS
-do
-  BLDSPEC=$RPMHOME/SPECS/$PKGPREFIX-$repo.spec
-  ( 
-    cp $PACKAGESPECS/$PKGPREFIX-$repo.spec.template $BLDSPEC || \
-            die "Could not find $PKGPREFIX-$repo.spec.template"
-    cd $repo || die "Can't find $repo"
-    get_patchlevel
-    sed -i "s/##OCBVER##/$SRCVERS/g" $BLDSPEC
-    sed -i "s/##OCBRELNO##/$RELEASE/g" $BLDSPEC
-    mkdir -p $WORK/$PKGPREFIX-$repo-$SRCVERS  || \
-            die "Could not create work directory $WORK/$PKGPREFIX-$repo-$SRCVERS"
-    rsync -a . $WORK/$PKGPREFIX-$repo-$SRCVERS/. || \
-            die "Copying (rsync) of files to work directory failed."
-    git log --pretty=oneline -n 10 >> $WORK/$PKGPREFIX-$repo-$SRCVERS/doc/README.Last10Merges
-    cd $WORK || \
-            die "Could not change to $WORK directory"
-    tar czf $PKGPREFIX-$repo-$SRCVERS.tgz --exclude=.git\* $PKGPREFIX-$repo-$SRCVERS || \
-            die "Creation of $PKGPREFIX-$repo-$SRCVERS.tgz tarball failed!"
-    mv $PKGPREFIX-$repo-$SRCVERS.tgz $RPMHOME/SOURCES/ || \
-            die "Could not move $PKGPREFIX-$repo-$SRCVERS.tgz to rpmbuild tree"
-    cd $WORK/$PKGPREFIX-$repo-$SRCVERS || \
-            die "$WORK/$PKGPREFIX-$repo-$SRCVERS directory not accessible!"
-    find . -type d ! -xtype l | grep -v \.git | sed "s/^/\%dir $PREFIX\/${repo}\//g" >>  $BLDSPEC
-    find . -type f | grep -v \.git | sed "s/^/$PREFIX\/${repo}\//g" >> $BLDSPEC
-    find . -type l | grep -v \.git | sed "s/^/$PREFIX\/${repo}\//g" >> $BLDSPEC
-    rm -rf $PKGPREFIX-$repo-$SRCVERS || \
-            die "Could not clean up $PKGPREFIX-$repo-$SRCVERS after creation of pristine sources"
-  )
-  cat $PACKAGESPECS/changelog.spec.template >> $BLDSPEC
-  sed -i 's/\.py/\.p\*/g' $BLDSPEC
-  ( cd $RPMHOME/SPECS && rpmbuild -ba --define "_topdir $RPMHOME" -v --clean $PKGPREFIX-$repo.spec )
-  cd $CROWBAR_HOME && rm -rf $WORK
+    pkgname="$PKGPREFIX-$repo-$SRCVERS"
+    target="$WORK/$pkgname"
+    cp "$spec_template" "$final_spec"
+    # 
+    mkdir -p "$target/opt/opencrowbar/$repo" || die "Could not create work directory $target"
+    cp -a * "$target/opt/opencrowbar/$repo/". || die "Copying files to $target failed."
+    mkdir -p "$target/opt/opencrowbar/$repo/doc/"
+    git log --pretty=oneline -n 10 >> "$target/opt/opencrowbar/$repo/doc/README.Last10Merges"
+    bsdtar -C "$target/opt/opencrowbar" -czf "$RPMHOME/SOURCES/$pkgname.tgz" \
+        -s "/^$repo/$pkgname/" "$repo" || die "Creation of $pkgname.tgz tarball failed!"
+    # Populate the %files section of the specfile
+    (   cd "$target"
+        find . -type d \! -xtype l | sed 's/^\./\%dir /g' >> "$final_spec"
+        find . -type f | sed 's/^\.//g' >> "$final_spec"
+        find . -type l | sed 's/^\.//g' >> "$final_spec"
+    )
+    # Add our changelog
+    cat "$PACKAGESPECS/changelog.spec.template" >> "$final_spec"
+    # Fix up template-ized sections of the specfile.
+    sed -i -e "s/##OCBVER##/$SRCVERS/g" \
+        -e "s/##OCBRELNO##/$RELEASE/g" \
+        -e 's/\.py/\.p\*/g' "$final_spec"
+    (   cd "$RPMHOME/SPECS"
+        rpmbuild --buildroot "$target" -ba --define "_topdir $RPMHOME" \
+            -v --clean "$PKGPREFIX-$repo.spec" )
+    rm -rf "$target"
 done
-
-exit 0 
+cd "$OCBDIR" && rm -rf "$WORK"
+exit 0

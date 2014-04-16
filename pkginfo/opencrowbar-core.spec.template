@@ -16,11 +16,7 @@ Group:    system/management
 Source:   %{name}-%{version}.tgz
 #Patch:
 Requires: ruby >= 1.9
-Requires: postgresql93 postgresql93-server postgresql93-contrib
-Requires: libpqxx libpqxx-devel openssl-devel gcc gcc-c++ make which patch
-Requires: sudo libxml2 libxml2-devel gcc libyaml libyaml-devel libffi-devel
-Requires: autoconf automake libtool
-#BuildRequires: 
+#BuildRequires:
 #PreReq:
 #Provides:
 BuildRoot:  %{_tmppath}/%{name}-%{version}-build
@@ -58,23 +54,6 @@ cp -f ./etc/init.d/crowbar $RPM_BUILD_ROOT/%{_initddir}/crowbar
 getent passwd crowbar &>/dev/null || useradd -m crowbar
 install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 
-%post
-[[ $1 -eq 1 ]] && chkconfig crowbar on && service crowbar start
-/sbin/ldconfig
-cd /opt/opencrowbar/core
-cat <<EOF >/opt/opencrowbar/prep.sh
-#!/bin/bash
-
-export RAILS_ENV=production
-cd /opt/opencrowbar/core
-gem install bundler
-./bootstrap.sh
-./setup/01-crowbar-rake-tasks.install
-./setup/02-make-machine-key.install
-EOF
-chmod 775 /opt/opencrowbar/prep.sh
-
-
 %preun
 [[ $1 -eq 0 ]] && service crowbar stop
 chkconfig crowbar off
@@ -89,6 +68,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %files 
 %defattr(-,crowbar,crowbar)
-%doc README.md LICENSE.md
-%dir /opt/opencrowbar/core/
 %{_initddir}/crowbar
