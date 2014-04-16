@@ -68,6 +68,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %files 
 %defattr(-,crowbar,crowbar)
-%doc README.md LICENSE.md
-%dir /opt/opencrowbar/core/
 %{_initddir}/crowbar

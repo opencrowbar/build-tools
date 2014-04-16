@@ -62,4 +62,3 @@ rm -rf $RPM_BUILD_ROOT
 
 %files 
 %defattr(-,crowbar,crowbar)
-%doc README.md LICENSE.md
