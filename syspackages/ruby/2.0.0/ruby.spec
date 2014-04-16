@@ -629,7 +629,7 @@ DISABLE_TESTS="-x test_rbconfig.rb $DISABLE_TESTS"
 %doc doc/ChangeLog-*
 %doc ruby-exercise.stp
 %{_datadir}/ri/*
-%{_datadir}/doc/ruby/capi/*
+#%{_datadir}/doc/ruby/capi/*
 
 %files -n rubygem-bigdecimal
 %{ruby_libdir}/bigdecimal
