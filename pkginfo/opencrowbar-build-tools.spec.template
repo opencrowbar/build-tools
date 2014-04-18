@@ -15,10 +15,7 @@ Url:      http://wwww.opencrowbar.org
 Group:    System/Management
 Source:   %{name}-%{version}.tgz
 #Patch:
-Requires: ruby >= 1.9
-#BuildRequires: 
-#PreReq:
-#Provides:
+Requires: opencrowbar-core
 BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 

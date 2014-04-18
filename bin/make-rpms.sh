@@ -26,6 +26,8 @@ fi
 target_dir="/tftpboot/centos-6.5/ocb-packages"
 
 mkdir -p "$target_dir"
+rm -rf "$target_dir/"*.rpm "$target_dir/repodata"
 find /rpmbuild/RPMS -name '*.rpm' -exec mv '{}' "$target_dir" ';'
 (cd "$target_dir"; createrepo .)
+chown -R crowbar:crowbar "$target_dir"
 echo "Built RPMs are in \$HOME/.cache/opencrowbar/tftpboot/centos-6.5/ocb-packages"
