@@ -14,12 +14,7 @@ Summary:  OpenCrowbar is a Hardware Provisioner and Software Deployment Tool
 Url:      http://wwww.opencrowbar.org
 Group:    system/management
 Source:   %{name}-%{version}.tgz
-#Patch:
-Requires: ruby >= 1.9
 Requires: opencrowbar-core
-#BuildRequires: 
-#PreReq:
-#Provides:
 BuildRoot:  %{_tmppath}/%{name}-%{version}-build
 BuildArch:  noarch
 
