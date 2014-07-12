@@ -62,9 +62,20 @@ for repodir in "$OCBDIR/"*; do
         -s "/^$repo/$pkgname/" "$repo" || die "Creation of $pkgname.tgz tarball failed!"
     # Populate the %files section of the specfile
     (   cd "$target"
-        find . -type d \! -xtype l | sed 's/^\./\%dir /g' >> "$final_spec"
-        find . -type f | sed 's/^\.//g' >> "$final_spec"
-        find . -type l | sed 's/^\.//g' >> "$final_spec"
+        declare -A dirs
+        declare -a files links
+        while read file; do
+            file=${file#.}
+            dirs["${file%/*}"]=true
+            files+=($file)
+        done < <(find . -type f \! -xtype l |sort -u)
+        while read link; do
+            link=${link#.}
+            dirs["${link%/*}"]=true
+            links+=($link)
+        done < <(find . -type l|sort -u)
+        printf '%s\n' "/opt/opencrowbar/$repo"  "${!dirs[@]}"  |sort -u >> "$final_spec"
+        printf '%s\n' "${files[@]}" "${links[@]}" >> "$final_spec"
     )
     # Add our changelog
     cat "$PACKAGESPECS/changelog.spec.template" >> "$final_spec"
