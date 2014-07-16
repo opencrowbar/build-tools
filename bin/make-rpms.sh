@@ -25,6 +25,8 @@ export OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
     '/opt/opencrowbar/build-tools/bin/make-rpms.sh' \
     "--target_dir=${TARGET_DIR}" "$@"
 
+# We do not want the raw_pkgs package info here.
+rm -f /etc/yum.repos.d/crowbar-raw_pkgs.repo || :
 yum -y install rpm-build createrepo git bsdtar
 "$OCBDIR/build-tools/bin/make-ocb-rpms.sh"
 if [[ $1 = '--with-ruby' ]]; then
