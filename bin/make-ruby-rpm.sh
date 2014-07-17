@@ -35,15 +35,11 @@ set -e
 
 # VARIABLES
 RPMBUILD=$HOME/rpmbuild
-RUBYVER=ruby-2.0.0
-RUBYINFODIR=build-tools/syspackages/ruby/2.0.0
 
 die () {
   echo $1
   exit -1
 }
-
-# create temp directory
 
 # Check that we are in the root of the opencrowbar checkout tree
 if [[ ! $OCBDIR ]]; then
@@ -57,33 +53,23 @@ if [[ ! $OCBDIR ]]; then
     fi
     OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
 fi
-
-# Create build tree, move ruby tarball into it, clean up mess
+SPECDIR="$OCBDIR/ruby-2.1.x-rpm"
+# Make sure we have an rpmbuild tree
 [[ -d $RPMBUILD ]] || mkdir -p "$RPMBUILD"/{SPECS,SOURCES}
 
-# Prep destinfo, pull down ruby sources, create clean tarball
-cd /opt/opencrowbar
-if [[ ! -d ruby/.git ]]; then
-    git clone https://github.com/ruby/ruby
-    cd ruby
-else
-    cd ruby
-    git fetch origin
+if [[ ! -d $SPECDIR/.git ]]; then
+    (cd "$OCBDIR" && git clone https://github.com/opencrowbar/ruby-2.1.x-rpm) || \
+        die "Cannot clone our ruby specfile repo!"
 fi
+which rpmbuild || yum -y install rpm-build
+which spectool || yum -y install rpmdevtools
+which yum-builddep || yum -y install yum-utils
 
-git checkout origin/ruby_2_0_0
-RUBYPL=$(grep "^#define RUBY_PATCHLEVEL " version.h | awk '{print $3}')
-
-# Now create the pristine tarball
-bsdtar -C /opt/opencrowbar -cjf "$RPMBUILD/SOURCES/$RUBYVER-p$RUBYPL.tar.bz2" \
-        -s "/^ruby/$RUBYVER-p$RUBYPL/" ruby || \
-
-# Go back to where we started, move other parts of the build stuff into place
-[[ -d $OCBDIR/$RUBYINFODIR ]] || die "Can't find critical ruby build files."
-cp -a "$OCBDIR/$RUBYINFODIR/"* "$RPMBUILD/SOURCES/"
-cd "$RPMBUILD/SOURCES" && sed "s/##PATCHLEVEL##/$RUBYPL/g" < ruby.spec > ../SPECS/ruby.spec
-
-# Now check we are ready to go, then build the ruby packages and clean up
-cd ../SPECS
-grep -q "$RUBYPL" ruby.spec || die "Ruby patchlevel substitution did not validate."
-rpmbuild -ba --clean ruby.spec || die "Ruby RPM Build failed"
+# Fetch our latest specfile.
+( cd "$SPECDIR" && git fetch && git checkout -f origin/master ) || \
+    die "Could not get our latest Ruby specfile."
+cd "$RPMBUILD/SPECS"
+cp "$SPECDIR/ruby21x.spec" .
+yum-builddep -y ruby21x.spec
+spectool -A -R -g ruby21x.spec
+rpmbuild -ba --clean --rmsource ruby21x.spec
