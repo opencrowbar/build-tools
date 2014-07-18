@@ -22,6 +22,7 @@ export OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
 [[ -x /.dockerinit ]] || \
     exec "$OCBDIR/core/tools/docker-admin" \
     "$TARGET_OS" \
+    --no-shell \
     '/opt/opencrowbar/build-tools/bin/make-rpms.sh' \
     "--target_dir=${TARGET_DIR}" "$@"
 
