@@ -40,13 +40,16 @@ Chef, Puppet, and SSH-based shell scripting.
 %setup -q
 
 %install
-mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/core
-cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/core/.
-mkdir -p $RPM_BUILD_ROOT/%{_initddir}
-cp -f ./etc/init.d/crowbar $RPM_BUILD_ROOT/%{_initddir}/crowbar
+mkdir -p ${RPM_BUILD_ROOT}/opt/opencrowbar/core
+cp -rp . ${RPM_BUILD_ROOT}/opt/opencrowbar/core/.
+mkdir -p ${RPM_BUILD_ROOT}/%{_initddir}
+cp -f ./etc/init.d/crowbar ${RPM_BUILD_ROOT}/%{_initddir}/crowbar
+mkdir -p ${RPM_BUILD_ROOT}/usr/sbin
+ln -s /opt/opencrowbar/core/bin/crowbar ${RPM_BUILD_ROOT}/usr/sbin/crowbar
 
 %pre
-getent passwd crowbar &>/dev/null || useradd -m crowbar
+/usr/bin/getent group crowbar || /usr/sbin/groupadd -r crowbar
+/usr/bin/getent passwd crowbar &>/dev/null || /usr/sbin/useradd -g crowbar -m crowbar
 install -m 664 -o crowbar -g crowbar /root/.bash_profile ~crowbar/.bash_profile
 
 %preun
@@ -59,9 +62,9 @@ rm -rf /opt/opencrowbar
 /sbin/ldconfig
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,crowbar,crowbar)
+%attr(-, crowbar, crowbar) /usr/sbin/crowbar
 %{_initddir}/crowbar
-/opt/opencrowbar

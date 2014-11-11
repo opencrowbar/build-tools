@@ -4,7 +4,8 @@
 #   - if you want to build release code execute:
 #                                              PRODREL="RELEASE" ./build-tools/bin/makerpms.sh
 #   - if you want to build emphemeral RPMS:
-#                                              ./build-tools/bin/makerpms/sh
+#                                              ./build-tools/bin/makerpms.sh
+#
 
 # Check that we are in the root of the opencrowbar checkout tree
 if [[ ! $OCBDIR ]]; then
@@ -24,7 +25,7 @@ VERSION=${VERSION:-2.0.0}
 RELEASE=${RELEASE:-1}
 WORK=${WORK:-/tmp/work}
 RPMHOME=${RPMHOME:-$HOME/rpmbuild}
-set -x -e
+set -e
 
 die() { echo "$(date '+%F %T %z'): $@"; exit 1; }
 
@@ -64,6 +65,13 @@ for repodir in "$OCBDIR/"*; do
     (   cd "$target"
         declare -A dirs
         declare -a files links
+        while read dir; do
+            dir=${dir#.}
+            if [ "$dir" == "" ]; then
+              continue
+            fi
+            dirs["${dir}"]=false
+        done < <(find . -type d | sort -u)
         while read file; do
             file=${file#.}
             dirs["${file%/*}"]=true
@@ -74,7 +82,16 @@ for repodir in "$OCBDIR/"*; do
             dirs["${link%/*}"]=true
             links+=($link)
         done < <(find . -type l|sort -u)
-        printf '%s\n' "/opt/opencrowbar/$repo"  "${!dirs[@]}"  |sort -u >> "$final_spec"
+        for dir in "${!dirs[@]}"; do
+          if [ "$dir" == "/opt" ]; then
+            continue
+          fi
+          if [ ! $dirs["$dir"] ] ; then
+            printf '%s\n' "/opt/opencrowbar/$repo"  "${dir}"
+          else
+            printf '%%dir %s\n' "/opt/opencrowbar/$repo"  "${dir}"
+          fi
+        done | sort -u >> "$final_spec"
         printf '%s\n' "${files[@]}" "${links[@]}" >> "$final_spec"
     )
     # Add our changelog

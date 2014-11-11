@@ -51,4 +51,4 @@ cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/build-tools/
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,root,root)
+%defattr(-,crowbar,crowbar)
