@@ -25,7 +25,7 @@ VERSION=${VERSION:-2.0.0}
 RELEASE=${RELEASE:-1}
 WORK=${WORK:-/tmp/work}
 RPMHOME=${RPMHOME:-$HOME/rpmbuild}
-set -e
+set -e -x
 
 die() { echo "$(date '+%F %T %z'): $@"; exit 1; }
 
@@ -59,6 +59,19 @@ for repodir in "$OCBDIR/"*; do
     cp -a * "$target/opt/opencrowbar/$repo/". || die "Copying files to $target failed."
     mkdir -p "$target/opt/opencrowbar/$repo/doc/"
     git log --pretty=oneline -n 10 >> "$target/opt/opencrowbar/$repo/doc/README.Last10Merges"
+    #
+    GITHASH="$(git log --pretty="%H" -n 1)"
+    GITDATE="$(git log --pretty="%cD" -n 1)"
+    while read file; do
+        cat $file | grep -v "^git:" | grep -v "^  commit:" | grep -v "^  date:" | grep -v "^build_version:" > /tmp/gg.$$
+        echo "git:" >> /tmp/gg.$$
+        echo "  commit: $GITHASH" >> /tmp/gg.$$
+        echo "  date: $GITDATE" >> /tmp/gg.$$
+        echo "build_version: $SRCVERS.$RELEASE" >> /tmp/gg.$$
+        cp /tmp/gg.$$ $file
+        rm /tmp/gg.$$
+    done < <(find "$target/opt/opencrowbar" -type f -name "crowbar.yml")
+    #
     bsdtar -C "$target/opt/opencrowbar" -czf "$RPMHOME/SOURCES/$pkgname.tgz" \
         -s "/^$repo/$pkgname/" "$repo" || die "Creation of $pkgname.tgz tarball failed!"
     # Populate the %files section of the specfile
