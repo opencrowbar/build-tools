@@ -45,17 +45,16 @@ mkdir -p $RPM_BUILD_ROOT/opt/opencrowbar/hardware
 cp -rp . $RPM_BUILD_ROOT/opt/opencrowbar/hardware/
 
 %pre
-getent passwd crowbar &>/dev/null || useradd -m crowbar
 
 %post
 chown -R crowbar:crowbar /opt/opencrowbar/hardware
 
 %postun
-rm -rf /opt/opencrownbar/hadoop
+rm -rf /opt/opencrownbar/hardware
 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files 
-%defattr(-,root,root)
+%defattr(-,crowbar,crowbar)
