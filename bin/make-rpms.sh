@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -x
 export PS4='${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): '
 # Check that we are in the root of the opencrowbar checkout tree
 if [[ $0 = /* ]]; then
@@ -28,7 +28,8 @@ export OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
 
 # We do not want the raw_pkgs package info here.
 rm -f /etc/yum.repos.d/crowbar-raw_pkgs.repo || :
-yum -y install rpm-build createrepo git bsdtar
+yum -y downgrade libyaml # epel is messed up and missing libyaml-devel for 1.6
+yum -y install rpm-build createrepo git bsdtar libyaml-devel
 "$OCBDIR/build-tools/bin/make-ocb-rpms.sh"
 if [[ $1 = '--with-ruby' ]]; then
     yum -y install gdbm-devel db4-devel tk-devel systemtap-sdt-devel
