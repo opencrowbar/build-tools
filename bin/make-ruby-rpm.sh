@@ -31,7 +31,7 @@
 # This script currently only allows building of ruby-2.0.0.
 ###
 
-set -e
+set -e -x
 
 # VARIABLES
 RPMBUILD=$HOME/rpmbuild
