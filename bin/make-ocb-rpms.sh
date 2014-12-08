@@ -21,7 +21,7 @@ if [[ ! $OCBDIR ]]; then
 fi
 
 PRODREL=${PRODREL:-"Dev"}
-VERSION=${VERSION:-2.0.0}
+VERSION=${VERSION:-2.1.0}
 RELEASE=${RELEASE:-1}
 WORK=${WORK:-/tmp/work}
 RPMHOME=${RPMHOME:-$HOME/rpmbuild}
