@@ -66,7 +66,7 @@ which spectool || yum -y install rpmdevtools
 which yum-builddep || yum -y install yum-utils
 
 # Fetch our latest specfile.
-( cd "$SPECDIR" && git fetch && git checkout -f origin/master ) || \
+( cd "$SPECDIR" && git fetch && git checkout -f master ) || \
     die "Could not get our latest Ruby specfile."
 cd "$RPMBUILD/SPECS"
 cp "$SPECDIR/ruby21x.spec" .
