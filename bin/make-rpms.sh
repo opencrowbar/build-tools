@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e -x
+export RPMHOME=${RPMHOME:-$HOME/rpmbuild}
 export PS4='${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]}): '
 # Check that we are in the root of the opencrowbar checkout tree
 if [[ $0 = /* ]]; then
@@ -29,7 +30,7 @@ export OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
 make_repo() {
     mkdir -p "$TARGET_DIR/$1/"
     rm -rf "$TARGET_DIR/"*.rpm "$TARGET_DIR/$1/repodata"
-    find /rpmbuild/RPMS -name '*.rpm' -exec mv '{}' "$TARGET_DIR/$1" ';'
+    find $RPMHOME/RPMS -name '*.rpm' -exec mv '{}' "$TARGET_DIR/$1" ';'
     (cd "$TARGET_DIR/$1"; createrepo .)
 }
 
