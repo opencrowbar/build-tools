@@ -16,7 +16,7 @@
 # Author: JohnHTerpstra
 #
 ### NOTES ###
-# This will build ruby-2.0.0 specifically for RHEL/Centos 6.5 - no others at this time.
+# This will build ruby-2.0.0 specifically for RHEL/Centos 6.6 - no others at this time.
 #
 # Do not use this tool as the root user - use as a non-privileged user only.
 #
