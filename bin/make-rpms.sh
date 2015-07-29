@@ -17,7 +17,7 @@ if [[ $1 = --target_dir=* ]]; then
     shift
 fi
 [[ $TARGET_OS ]] || TARGET_OS="centos"
-[[ $TARGET_DIR ]] || TARGET_DIR="/tftpboot/centos-6.5/"
+[[ $TARGET_DIR ]] || TARGET_DIR="/tftpboot/centos-6.6/"
 
 export OCBDIR="${OCBDIR%/build-tools/bin/${0##*/}}"
 [[ -x /.dockerinit ]] || \
